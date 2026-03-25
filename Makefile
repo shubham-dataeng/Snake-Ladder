@@ -4,7 +4,10 @@ CFLAGS := -Wall -Wextra -g -Iinclude
 LDFLAGS :=
 
 SRCS := src/utils.c \
-src/main.c
+        src/board.c \
+        src/player.c \
+        src/dice.c \
+        src/main.c
 
 OBJS := $(SRCS:.c=.o)
 
