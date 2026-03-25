@@ -14,8 +14,11 @@ A console-based Snake & Ladder game built in C with modular design.
 ## 🛠️ How to Run
 
 ```bash
-gcc src/*.c -Iinclude -o snake_ladder
-./snake_ladder
+make
+make run
+make debug
+make memcheck
+make clean
 ```
 
 ## 📁 Project Structure
