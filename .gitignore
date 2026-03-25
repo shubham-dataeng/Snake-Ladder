@@ -1,0 +1,7 @@
+*.o
+snake-ladder
+.vscode/
+*.swp
+*~
+vgcore.*
+saves/*.dat
