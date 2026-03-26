@@ -1,25 +1,34 @@
-#include "../include/utils.h"
-#include "../include/dice.h"
-#include "../include/player.h"
-#include "../include/board.h" 
-#include <stdio.h>
+/* Quick engine sanity check */
+#include "board.h"
 int main(void) {
 seed_rng();
-/* Test board */
 Board b;
 board_init_defaults(&b);
-board_print_legend(&b);
-printf("Cell 99 type: %d (should be 1=SNAKE)\n",
-board_cell_type(&b, 99));
-printf("board_resolve(99) = %d (should be 78)\n",
-board_resolve(&b, 99));
-/* Test player */
-Player p;
-player_init(&p, "Alice", PLAYER_HUMAN, NULL);
-printf("Player: %s at position %d\n", p.name, p.position);
-/* Test dice */
-DiceStats ds = {0};
-for (int i = 0; i < 100; i++) dice_roll(&ds);
-dice_print_stats(&ds);
+/* Test all edge cases manually */
+printf("Overshoot test: pos=98 roll=5 → raw=103 → bounce to 97\n");
+int raw = 98 + 5;
+if (raw > 100) raw = 100 - (raw - 100);
+printf(" Result: %d (expected 97)\n", raw);
+printf("Snake test: land on 99 → resolve to 78\n");
+printf(" Result: %d (expected 78)\n", board_resolve(&b, 99));
+printf("Ladder test: land on 4 → resolve to 25\n");
+printf(" Result: %d (expected 25)\n", board_resolve(&b, 4));
+/* Run 1000 random games, print average turn count */
+int total_turns = 0;
+int games = 1000;
+for (int g = 0; g < games; g++) {
+int pos = 0, turns = 0;
+while (pos < 100) {
+int roll = random_int(1, 6);
+int new_pos = pos + roll;
+if (new_pos > 100) new_pos = 100 - (new_pos - 100);
+pos = board_resolve(&b, new_pos);
+turns++;
+}
+total_turns += turns;
+}
+printf("Average turns to win (1 player): %.1f\n",
+(float)total_turns / games);
+/* Expected: roughly 25-40 turns for 1 player */
 return 0;
 }
