@@ -1,5 +1,6 @@
 #include "network.h"
 #include "ui.h"
+#include "utils.h"
 #include "board.h"
 #include "player.h"
 #include "dice.h"
