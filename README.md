@@ -4,7 +4,7 @@
 
 [![Status](https://img.shields.io/badge/Status-Complete-brightgreen?style=flat-square)](https://github.com/shubham-dataeng/Snake-Ladder)
 [![C Standard](https://img.shields.io/badge/C-C11-blue?style=flat-square&logo=c)]()
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)]()
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-Zero%20Warnings-success?style=flat-square)]()
 [![Memory](https://img.shields.io/badge/Memory-Valgrind%20Clean-success?style=flat-square)]()
 
