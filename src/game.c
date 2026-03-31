@@ -205,8 +205,8 @@ static MoveResult execute_move(GameState *gs, int pidx, int roll) {
 	Player *p = &gs->players[pidx];
 	Board *b = &gs->board;
 	int raw_new = p->position + roll;
-	/* If overshoot or equal to 101+, stay at current position */
-	if (raw_new >= BOARD_SIZE) {
+	/* If overshoot past 100, stay at current position (cannot exceed 100) */
+	if (raw_new > BOARD_SIZE) {
 		raw_new = p->position;
 	}
 	CellType ct = board_cell_type(b, raw_new);
