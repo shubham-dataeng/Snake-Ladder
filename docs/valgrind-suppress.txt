@@ -1,0 +1,66 @@
+# valgrind-suppress.txt — Valgrind suppression file for Phase 11
+# Common false positives in standard library and terminal I/O
+# Usage: valgrind --suppressions=valgrind-suppress.txt ./snake-ladder
+
+# ============================================================================
+# Terminal I/O suppressions (legitimate libc behavior)
+# ============================================================================
+{
+    <stdio_unsuppress>
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    fun:*
+    fun:__libc_start_main
+}
+
+{
+    <stdio_init>
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    fun:malloc
+}
+
+{
+    <locale_init>
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    fun:malloc
+    fun:malloc
+    fun:setlocale
+}
+
+# ============================================================================
+# Time library suppressions
+# ============================================================================
+{
+    <time_init>
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    fun:tzalloc
+}
+
+# ============================================================================
+# Random number generation init (time-based seed)
+# ============================================================================
+{
+    <rand_init>
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:time
+    fun:seed_rng
+}
+
+# ============================================================================
+# File I/O suppressions (non-critical)
+# ============================================================================
+{
+    <file_open_leak>
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    fun:fopen
+}

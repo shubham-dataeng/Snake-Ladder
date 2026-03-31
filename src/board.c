@@ -124,6 +124,11 @@ bool board_add_ladder(Board *b, int bottom, int top) {
     return true;
 }
 int board_resolve(const Board *b, int pos) {
+    /* BOUNDS CHECK: pos must be 0..100 (added in Phase 11) */
+    if (pos < 0 || pos > BOARD_SIZE) {
+        fprintf(stderr, "board_resolve: position %d out of bounds, returning %d\n", pos, pos);
+        return pos;  /* Return as-is if out of bounds */
+    }
     /*
      * board_resolve(): given that a player just moved to 'pos',
      * return where they actually end up.
@@ -145,6 +150,7 @@ int board_resolve(const Board *b, int pos) {
     }
     return current;
 }
+
 CellType board_cell_type(const Board *b, int pos) {
     if (pos < 0 || pos > BOARD_SIZE)
         return CELL_NORMAL;

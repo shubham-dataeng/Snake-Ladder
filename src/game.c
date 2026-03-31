@@ -93,11 +93,12 @@ void game_loop(GameState *gs) {
 				analytics_end_game(&gs->analytics, gs->turn_number);
 				analytics_print(&gs->analytics);
 			}
-			/* Show replay option */
-			printf("\n Watch replay? (Y/N): ");
-			char choice;
-			if (scanf("%c", &choice) == 1 && (choice == 'y' || choice == 'Y')) {
+		/* Use fgets+sscanf instead of scanf to consume newline */
+		char choice_buf[16];
+		if (fgets(choice_buf, sizeof(choice_buf), stdin) != NULL) {
+			if (choice_buf[0] == 'y' || choice_buf[0] == 'Y') {
 				replay_play(&gs->replay_log);
+			}
 			}
 		}
 	}
@@ -204,8 +205,8 @@ static MoveResult execute_move(GameState *gs, int pidx, int roll) {
 	Player *p = &gs->players[pidx];
 	Board *b = &gs->board;
 	int raw_new = p->position + roll;
-	/* If overshoot past 100, stay at current position */
-	if (raw_new > BOARD_SIZE) {
+	/* If overshoot or equal to 101+, stay at current position */
+	if (raw_new >= BOARD_SIZE) {
 		raw_new = p->position;
 	}
 	CellType ct = board_cell_type(b, raw_new);

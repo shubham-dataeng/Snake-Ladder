@@ -25,7 +25,7 @@ void player_init(Player *p, const char *name, PlayerType type,
     memset(p, 0, sizeof(Player));
     /* Safely copy name — strncpy does NOT guarantee null termination */
     strncpy(p->name, name, MAX_NAME_LEN - 1);
-    p->name[MAX_NAME_LEN - 1] = '\0'; /* Always null-terminate */
+    p->name[MAX_NAME_LEN - 1] = '\0'; /* ALWAYS null-terminate */
     p->position = 0;                  /* Off the board */
     p->type = type;
     p->has_won = false;

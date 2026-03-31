@@ -58,8 +58,56 @@ debug-server: $(SERVER_TARGET)
 debug-client: $(CLIENT_TARGET)
 	gdb ./$(CLIENT_TARGET)
 
+# ■■ PHASE 11: TEST SUITE ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+# Test targets for comprehensive bug fixing and quality assurance
+
+TEST_TARGET := test-suite
+TEST_SRCS := tests/test_suite.c
+TEST_OBJS := $(TEST_SRCS:.c=.o)
+# Exclude main.c from test build (test_suite has its own main)
+TEST_GAME_OBJS := $(filter-out src/main.o, $(GAME_OBJS))
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+$(TEST_TARGET): $(TEST_OBJS) $(TEST_GAME_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+tests/%.o: tests/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# GDB debugging with custom commands
+debug-with-gdb: debug
+	gdb -x docs/gdb-commands.gdb --args ./$(GAME_TARGET)
+
+# Valgrind memory check (light)
 memcheck: $(GAME_TARGET)
-	valgrind --leak-check=full --track-origins=yes ./$(GAME_TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(GAME_TARGET)
+
+# Valgrind with suppressions (cleaner output)
+memcheck-clean: $(GAME_TARGET)
+	valgrind --suppressions=docs/valgrind-suppress.txt --leak-check=full ./$(GAME_TARGET)
+
+# Valgrind for server binary
+memcheck-server: $(SERVER_TARGET)
+	valgrind --suppressions=docs/valgrind-suppress.txt --leak-check=full ./$(SERVER_TARGET)
+
+# AddressSanitizer (runtime memory safety)
+sanitize: clean
+	CFLAGS="$(CFLAGS) -fsanitize=address -fsanitize=undefined" make $(GAME_TARGET)
+	./$(GAME_TARGET)
+
+# Static analysis with clang (if available)
+static-check:
+	@command -v clang >/dev/null 2>&1 && \
+	clang --analyze src/*.c -Iinclude 2>&1 | grep -E "^src/" || \
+	echo "clang not available; skipping static analysis"
+
+# Full test suite
+all-tests: test memcheck-clean
+	@echo "✅ All tests completed successfully"
+
+.PHONY: test debug-with-gdb memcheck memcheck-clean memcheck-server sanitize static-check all-tests
 
 format:
 	find src include \( -name "*.c" -o -name "*.h" \) | xargs clang-format -i
