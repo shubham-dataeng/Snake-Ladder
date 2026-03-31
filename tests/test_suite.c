@@ -20,12 +20,10 @@
 #include "utils.h"
 
 /* Test counters */
-static int tests_run = 0;
 static int tests_passed = 0;
 static int tests_failed = 0;
 
 /* Test macros */
-#define TEST(name) void test_##name(void); tests_run++; test_##name();
 #define ASSERT_EQ(got, expected, msg) do { \
     if ((got) != (expected)) { \
         printf("  ✗ FAIL: %s (got %d, expected %d)\n", msg, got, expected); \
@@ -326,10 +324,11 @@ int main(void) {
     printf("╔════════════════════════════════════════════════════════════╗\n");
     printf("║                      TEST RESULTS                          ║\n");
     printf("╚════════════════════════════════════════════════════════════╝\n");
-    printf("Total Tests:  %d\n", tests_run);
+    int total_tests = tests_passed + tests_failed;
+    printf("Total Tests:  %d\n", total_tests);
     printf("Passed:       %d ✅\n", tests_passed);
     printf("Failed:       %d ❌\n", tests_failed);
-    printf("Pass Rate:    %.1f%%\n\n", tests_run > 0 ? (100.0 * tests_passed / tests_run) : 0.0);
+    printf("Pass Rate:    %.1f%%\n\n", total_tests > 0 ? (100.0 * tests_passed / total_tests) : 0.0);
 
     return tests_failed == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
