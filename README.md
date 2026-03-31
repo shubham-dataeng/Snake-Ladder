@@ -71,8 +71,10 @@ This project demonstrates **professional game development practices** in C, incl
 | **ai.c/h** | AI decision making (Easy/Hard strategies) | 150 | ✅ Complete |
 | **analytics.c/h** | Statistics tracking, dice distribution, game metrics | 120 | ✅ Complete |
 | **replay.c/h** | Game recording/playback with binary persistence | 190 | ✅ Complete |
-| **main.c** | Entry point, menu system, game flow | 100 | ✅ Complete |
-| **network.c/h** | Multiplayer over TCP/IP | 200 | 🔄 In Progress |
+| **network.c/h** | TCP/IP sockets, message protocol, validation | 280 | ✅ Complete |
+| **server.c** | Authoritative game server, move validation | 200 | ✅ Complete |
+| **client.c** | Network client, UI sync, player input | 180 | ✅ Complete |
+| **main.c** | Standaloneentry point, menu system | 100 | ✅ Complete |
 | **utils.c/h** | I/O, RNG, terminal control | 150 | ✅ Complete |
 
 ### Game State Machine
@@ -108,11 +110,24 @@ make
 
 ### Run the Game
 ```bash
-# Play (with integrated menu & save/load)
+# Play locally (with integrated menu & save/load)
 make run
 
-# Debug with GDB
+# Play online (Network Multiplayer)
+Terminal 1 (Server):
+  make run-server
+
+Terminal 2 (Client 1):
+  make run-client
+  # Then enter your name and connect to localhost:5000
+
+Terminal 3 (Client 2, same network):
+  ./snake-ladder-client [server_ip] 5000
+
+Debug with GDB
 make debug
+make debug-server
+make debug-client
 
 # Memory check (Valgrind)
 make memcheck
@@ -258,12 +273,18 @@ gcc -Iinclude tests/test_board.c src/board.c src/utils.c -o test_board && ./test
 - [x] **Post-game display** — Show analytics after each game with option to watch replay
 - [x] **Binary save/load** — Replay data persisted to disk for later playback
 
-### 🔄 Phase 10+: Advanced (In Progress)
-- [ ] Network multiplayer (TCP/IP)
+### ✅ Phase 10: Network Multiplayer (Complete)
+- [x] **Client-server TCP architecture** — Authoritative server game loop with move validation
+- [x] **Network protocol** — 15+ message types for robust communication
+- [x] **Move validation** — Server-side validation prevents cheating
+- [x] **Two binaries** — `snake-ladder-server` and `snake-ladder-client`
+- [x] **Dual binaries** — Original `snake-ladder` game still works for local play
+
+### 🔄 Phase 11+: Advanced (In Progress)
+- [ ] Connection resilience (reconnect with move history)
 - [ ] Terminal UI improvements (animations)
 - [ ] Statistics dashboard
 - [ ] Leaderboard system
-- [ ] Web interface (C to WebAssembly)
 
 ---
 
@@ -387,6 +408,14 @@ MIT License — See LICENSE file for details
 - Game State Machine Pattern: FSM Design Pattern
 - Binary Serialization: Network Byte Order (Big-Endian)
 - Terminal Rendering: ANSI/VT100 Escape Codes
+
+---
+
+## 👨‍💻 Author
+
+**Shubham Patel** 
+
+C Developer | Systems Programming Enthusiast
 
 ---
 
