@@ -566,7 +566,6 @@ All pull requests are reviewed for:
 
 **Project Author:** Shubham Patel  
 **GitHub:** [@shubham-dataeng](https://github.com/shubham-dataeng)  
-**Email:** [Your email]
 
 ### Inspired By
 - Classic Snake & Ladder board game rules
