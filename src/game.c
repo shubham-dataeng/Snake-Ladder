@@ -1,6 +1,6 @@
 /*
 * game.c — Game loop and state machine
-* Depends: game.h, board.h, player.h, dice.h, ui.h, utils.h
+* Depends: game.h, board.h, player.h, dice.h, ui.h, utils.h, save.h
 */
 #include "game.h"
 #include "board.h"
@@ -8,6 +8,7 @@
 #include "dice.h"
 #include "ui.h"
 #include "utils.h"
+#include "save.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -78,6 +79,16 @@ ui_show_results(gs);
 }
 }
 }
+/* ■■ Save game to slot ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
+void game_save(GameState *gs, int slot) {
+    if (save_game(gs, slot)) {
+        printf(" \n ✓ Game saved to slot %d\n", slot);
+        pause_for_enter();
+    } else {
+        printf(" \n ✗ Failed to save game\n");
+        pause_for_enter();
+    }
+}
 void game_next_turn(GameState *gs) {
 int idx = gs->current_player_idx;
 Player *p = &gs->players[idx];
@@ -92,12 +103,21 @@ ui_render_board(gs);
 ui_print_status(gs);
 int roll;
 if (p->type == PLAYER_HUMAN) {
-/* Human: press Enter to roll */
-printf("\n %s%s\033[0m — Press ENTER to roll...\n",
+/* Human: offer pause option before rolling */
+printf("\n %s%s\033[0m — [ENTER] to roll, [S] to save & quit\n",
 p->color_code, p->name);
 fflush(stdout);
 int c;
-while ((c = getchar()) != '\n' && c != EOF) {}
+while ((c = getchar()) != '\n' && c != EOF) {
+    if (c == 's' || c == 'S') {
+        /* Save game and exit loop */
+        printf(" \n Save game to slot (1-3): ");
+        int slot = read_int("", 1, 3);
+        game_save(gs, slot);
+        gs->phase = GPHASE_OVER;  /* Exit game gracefully */
+        return;
+    }
+}
 roll = dice_roll(ds);
 } else {
 /* AI: auto-roll */

@@ -107,7 +107,7 @@ make
 
 ### Run the Game
 ```bash
-# Play
+# Play (with integrated menu & save/load)
 make run
 
 # Debug with GDB
@@ -119,6 +119,32 @@ make memcheck
 # Clean build artifacts
 make clean
 ```
+
+### Menu System & Save/Load
+
+The game now features a **complete menu system** with save/load integration:
+
+```
+┌─────────────────────────────────────────┐
+│  SNAKE & LADDER v1.0 Main Menu          │
+├─────────────────────────────────────────┤
+│  [1] New Game      — Start fresh        │
+│  [2] Load Game     — Resume from save   │
+│  [3] Custom Board  — (Coming soon)      │
+│  [4] View Rules    — Show instructions  │
+│  [5] Quit          — Exit               │
+└─────────────────────────────────────────┘
+```
+
+**In-Game Save:**
+- During your turn, press **[S]** instead of [ENTER] to roll
+- Choose save slot (1-3)
+- Game saved! Return to menu anytime
+
+**Load Game:**
+- From menu, choose [2] Load Game
+- See all available saves
+- Pick a slot → game resumes EXACTLY where you left off
 
 ### Example Session
 ```
@@ -132,6 +158,8 @@ make clean
   ■ Player 1      Cell:   25
     Player 2      Cell:   18
     Player 3      Cell:   12
+    
+ → Press ENTER to roll, [S] to save & quit
 ```
 
 ---
@@ -205,21 +233,25 @@ gcc -Iinclude tests/test_board.c src/board.c src/utils.c -o test_board && ./test
 
 ## 🛣️ Development Roadmap
 
-### ✅ Phase 1-4: Core Engine (Complete)
+### ✅ Phase 1-5: Core Engine + Persistence (Complete)
 - [x] Board system with snakes & ladders
 - [x] Player management
 - [x] Dice mechanics
 - [x] Game loop & state machine
-- [x] Basic UI
+- [x] Basic UI with colors
+- [x] **Binary save/load with menu integration** (NEW!)
+- [x] Menu system with 5 options
+- [x] In-game pause & save
+- [x] Load game from slot
 
-### 🔄 Phase 5-7: Features (In Progress)
+### 🔄 Phase 6-8: Advanced Features (In Progress)
 - [ ] AI players (easy/hard strategies)
 - [ ] Network multiplayer (TCP/IP)
 - [ ] Custom board loader from config file
 - [ ] Game replay system
 
-### 📋 Phase 8+: Polish & Extension
-- [ ] Terminal UI improvements (color support, animations)
+### 📋 Phase 9+: Polish & Extension
+- [ ] Terminal UI improvements (animations)
 - [ ] Sound effects (optional)
 - [ ] Statistics dashboard
 - [ ] Leaderboard system

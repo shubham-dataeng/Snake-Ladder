@@ -68,6 +68,7 @@ typedef struct {
 void game_init(GameState *gs, int num_players);
 void game_loop(GameState *gs);
 void game_next_turn(GameState *gs);
+void game_save(GameState *gs, int slot);
 bool game_is_over(const GameState *gs);
 void game_declare_winner(GameState *gs, int player_idx);
 Player *game_current_player(GameState *gs);

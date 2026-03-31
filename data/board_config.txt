@@ -1,0 +1,19 @@
+# Snake & Ladder Board Configuration
+# Lines starting with '#' are comments — ignored by the parser.
+# Format: KEYWORD value1 value2
+# SNAKE head tail (head > tail)
+SNAKE 99 78
+SNAKE 94 56
+SNAKE 87 24
+SNAKE 62 18
+SNAKE 54 9
+SNAKE 17 1
+# LADDER bottom top (top > bottom)
+LADDER 4 25
+LADDER 9 31
+LADDER 20 38
+LADDER 28 84
+LADDER 40 59
+LADDER 51 67
+LADDER 63 81
+LADDER 71 91
