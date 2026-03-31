@@ -8,7 +8,7 @@
 
 # ─── Compiler Configuration ─────────────────────────────────────────────────────
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c11 -g -Iinclude
+CFLAGS := -Wall -Wextra -std=gnu11 -g -Iinclude
 LDFLAGS := -lm
 VERSION := 1.0
 
