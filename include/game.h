@@ -2,6 +2,7 @@
 #define GAME_H
 #include "board.h"
 #include "player.h"
+#include "dice.h"
 /* Game version — used in save file validation (Phase 6) */
 #define GAME_VERSION 1
 /*
@@ -19,6 +20,16 @@ typedef enum {
     GPHASE_PAUSED = 3,  /* Mid-game save/load */
     GPHASE_OVER = 4,    /* Game finished, show results */
 } GamePhase;
+/*
+ * MoveResult: the outcome of a player's move.
+ * Returned by execute_move() to determine what message to display.
+ */
+typedef enum {
+    MOVE_NORMAL = 0,  /* Moved to a regular cell */
+    MOVE_SNAKE = 1,   /* Landed on snake, slid down */
+    MOVE_LADDER = 2,  /* Landed on ladder, climbed up */
+    MOVE_WIN = 3,     /* Reached cell 100 and won */
+} MoveResult;
 /*
  * GameState: the COMPLETE state of a game in progress.
  *
@@ -50,6 +61,8 @@ typedef struct {
     bool ai_enabled;
     bool analytics_on;
     bool replay_on;
+    /* Dice statistics */
+    DiceStats dice_stats;
 } GameState;
 /* Function prototypes */
 void game_init(GameState *gs, int num_players);

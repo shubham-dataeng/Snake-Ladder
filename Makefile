@@ -3,11 +3,8 @@ CC := gcc
 CFLAGS := -Wall -Wextra -g -Iinclude
 LDFLAGS :=
 
-SRCS := src/utils.c \
-        src/board.c \
-        src/player.c \
-        src/dice.c \
-        src/main.c
+SRCS := src/utils.c src/board.c src/player.c \
+src/dice.c src/game.c src/ui.c src/main.c
 
 OBJS := $(SRCS:.c=.o)
 
