@@ -63,16 +63,16 @@ This project demonstrates **professional game development practices** in C, incl
 |--------|---------|-------|--------|
 | **board.c/h** | Game grid, snake/ladder placement, O(1) lookups | 250 | ✅ Complete |
 | **player.c/h** | Player state, stats, move tracking | 180 | ✅ Complete |
-| **game.c/h** | State machine, game loop, turn logic | 250 | ✅ Complete |
+| **game.c/h** | State machine, game loop, turn logic | 280 | ✅ Complete |
 | **dice.c/h** | Fair random number generation | 80 | ✅ Complete |
 | **ui.c/h** | ANSI terminal rendering, board display | 200 | ✅ Complete |
 | **save.c/h** | Binary serialization, checksum validation | 180 | ✅ Complete |
 | **config.c/h** | Board configuration parser | 120 | ✅ Complete |
 | **ai.c/h** | AI decision making (Easy/Hard strategies) | 150 | ✅ Complete |
+| **analytics.c/h** | Statistics tracking, dice distribution, game metrics | 120 | ✅ Complete |
+| **replay.c/h** | Game recording/playback with binary persistence | 190 | ✅ Complete |
 | **main.c** | Entry point, menu system, game flow | 100 | ✅ Complete |
 | **network.c/h** | Multiplayer over TCP/IP | 200 | 🔄 In Progress |
-| **replay.c/h** | Game recording/playback | 150 | 🔄 In Progress |
-| **analytics.c/h** | Statistics, data aggregation | 120 | 🔄 In Progress |
 | **utils.c/h** | I/O, RNG, terminal control | 150 | ✅ Complete |
 
 ### Game State Machine
@@ -251,9 +251,15 @@ gcc -Iinclude tests/test_board.c src/board.c src/utils.c -o test_board && ./test
 - [x] Professional config parser (case-insensitive, error collection, graceful fallback)
 - [x] Menu integration for both features
 
-### 🔄 Phase 9+: Advanced (In Progress)
+### ✅ Phase 9: Analytics & Replay (Complete)
+- [x] **Game analytics** — Per-move and per-game statistics with visual distribution charts
+- [x] **Game replay system** — Record every move and play back with 80ms delays
+- [x] **Statistics tracking** — Total turns, snake hits, ladder climbs, dice distribution with percentages
+- [x] **Post-game display** — Show analytics after each game with option to watch replay
+- [x] **Binary save/load** — Replay data persisted to disk for later playback
+
+### 🔄 Phase 10+: Advanced (In Progress)
 - [ ] Network multiplayer (TCP/IP)
-- [ ] Game replay system
 - [ ] Terminal UI improvements (animations)
 - [ ] Statistics dashboard
 - [ ] Leaderboard system

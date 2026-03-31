@@ -1,6 +1,6 @@
 /*
 * game.c — Game loop and state machine
-* Depends: game.h, board.h, player.h, dice.h, ui.h, utils.h, save.h, ai.h
+* Depends: game.h, board.h, player.h, dice.h, ui.h, utils.h, save.h, ai.h, analytics.h, replay.h
 */
 #include "game.h"
 #include "board.h"
@@ -10,6 +10,8 @@
 #include "utils.h"
 #include "save.h"
 #include "ai.h"
+#include "analytics.h"
+#include "replay.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -19,26 +21,29 @@ static void phase_setup(GameState *gs);
 static MoveResult execute_move(GameState *gs, int pidx, int roll);
 /* ■■ Initialization ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
 void game_init(GameState *gs, int num_players) {
-memset(gs, 0, sizeof(GameState));
-gs->version = GAME_VERSION;
-gs->num_players = num_players;
-gs->phase = GPHASE_SETUP;
-gs->turn_number = 0;
-gs->num_winners = 0;
-gs->ai_enabled = false;
-gs->analytics_on= true;
-gs->replay_on = false;
-/* Initialize board with default layout */
-board_init_defaults(&gs->board);
-/* Initialize players with default names and sequential colors */
-const char *colors[] = {"\033[91m","\033[92m","\033[93m",
-"\033[94m","\033[95m","\033[96m"};
-for (int i = 0; i < num_players; i++) {
-char name[MAX_NAME_LEN];
-snprintf(name, sizeof(name), "Player %d", i + 1);
-player_init(&gs->players[i], name, PLAYER_HUMAN, colors[i%6]);
+	memset(gs, 0, sizeof(GameState));
+	gs->version = GAME_VERSION;
+	gs->num_players = num_players;
+	gs->phase = GPHASE_SETUP;
+	gs->turn_number = 0;
+	gs->num_winners = 0;
+	gs->ai_enabled = false;
+	gs->analytics_on = true;
+	gs->replay_on = false;
+	/* Initialize board with default layout */
+	board_init_defaults(&gs->board);
+	/* Initialize analytics and replay */
+	analytics_init(&gs->analytics);
+	/* Initialize players with default names and sequential colors */
+	const char *colors[] = {"\033[91m","\033[92m","\033[93m",
+	"\033[94m","\033[95m","\033[96m"};
+	for (int i = 0; i < num_players; i++) {
+		char name[MAX_NAME_LEN];
+		snprintf(name, sizeof(name), "Player %d", i + 1);
+		player_init(&gs->players[i], name, PLAYER_HUMAN, colors[i%6]);
+	}
 }
-}
+
 /* ■■ Setup phase ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 * Collect player names and types (human/AI).
 */
@@ -67,19 +72,35 @@ case 3: p->type = PLAYER_AI_HARD; break;
 }
 printf("\n");
 }
+/* Initialize replay with final player names */
+replay_init(&gs->replay_log, gs->num_players,
+            (const char(*)[MAX_NAME_LEN])gs->players[0].name);
 gs->phase = GPHASE_PLAYING;
 }
 /* ■■ Main game loop ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
 void game_loop(GameState *gs) {
-    if (gs->phase == GPHASE_SETUP)
-phase_setup(gs);
-while (gs->phase == GPHASE_PLAYING) {
-game_next_turn(gs);
-if (game_is_over(gs)) {
-gs->phase = GPHASE_OVER;
-ui_show_results(gs);
-}
-}
+	if (gs->phase == GPHASE_SETUP)
+		phase_setup(gs);
+	/* Enable replay recording */
+	gs->replay_on = true;
+	while (gs->phase == GPHASE_PLAYING) {
+		game_next_turn(gs);
+		if (game_is_over(gs)) {
+			gs->phase = GPHASE_OVER;
+			ui_show_results(gs);
+			/* Record final game in analytics */
+			if (gs->analytics_on) {
+				analytics_end_game(&gs->analytics, gs->turn_number);
+				analytics_print(&gs->analytics);
+			}
+			/* Show replay option */
+			printf("\n Watch replay? (Y/N): ");
+			char choice;
+			if (scanf("%c", &choice) == 1 && (choice == 'y' || choice == 'Y')) {
+				replay_play(&gs->replay_log);
+			}
+		}
+	}
 }
 /* ■■ Save game to slot ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
 void game_save(GameState *gs, int slot) {
@@ -180,22 +201,36 @@ return &gs->players[gs->current_player_idx];
 }
 /* ■■ execute_move(): the core move logic ■■■■■■■■■■■■■■■■■■■■■■■■ */
 static MoveResult execute_move(GameState *gs, int pidx, int roll) {
-Player *p = &gs->players[pidx];
-Board *b = &gs->board;
-int raw_new = p->position + roll;
-/* If overshoot past 100, stay at current position */
-if (raw_new > BOARD_SIZE) {
-raw_new = p->position;
-}
-CellType ct = board_cell_type(b, raw_new);
-int resolved = board_resolve(b, raw_new);
-/* Update stats */
-if (ct == CELL_SNAKE) p->stats.snakes_hit++;
-if (ct == CELL_LADDER) p->stats.ladders_taken++;
-if (roll > p->stats.max_roll) p->stats.max_roll = roll;
-player_move(p, resolved);
-if (player_has_won(p)) { game_declare_winner(gs, pidx); return MOVE_WIN; }
-if (ct == CELL_SNAKE) return MOVE_SNAKE;
-if (ct == CELL_LADDER) return MOVE_LADDER;
-return MOVE_NORMAL;
+	Player *p = &gs->players[pidx];
+	Board *b = &gs->board;
+	int raw_new = p->position + roll;
+	/* If overshoot past 100, stay at current position */
+	if (raw_new > BOARD_SIZE) {
+		raw_new = p->position;
+	}
+	CellType ct = board_cell_type(b, raw_new);
+	int resolved = board_resolve(b, raw_new);
+	/* Update stats */
+	if (ct == CELL_SNAKE) p->stats.snakes_hit++;
+	if (ct == CELL_LADDER) p->stats.ladders_taken++;
+	if (roll > p->stats.max_roll) p->stats.max_roll = roll;
+	/* Record in analytics */
+	if (gs->analytics_on) {
+		analytics_record_move(&gs->analytics, roll,
+							  ct == CELL_SNAKE,
+							  ct == CELL_LADDER);
+	}
+	/* Record in replay */
+	if (gs->replay_on) {
+		replay_record(&gs->replay_log, pidx, roll,
+					  p->position, resolved,
+					  ct == CELL_SNAKE,
+					  ct == CELL_LADDER,
+					  raw_new > BOARD_SIZE);
+	}
+	player_move(p, resolved);
+	if (player_has_won(p)) { game_declare_winner(gs, pidx); return MOVE_WIN; }
+	if (ct == CELL_SNAKE) return MOVE_SNAKE;
+	if (ct == CELL_LADDER) return MOVE_LADDER;
+	return MOVE_NORMAL;
 }

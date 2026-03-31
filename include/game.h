@@ -3,6 +3,8 @@
 #include "board.h"
 #include "player.h"
 #include "dice.h"
+#include "analytics.h"
+#include "replay.h"
 /* Game version — used in save file validation (Phase 6) */
 #define GAME_VERSION 1
 /*
@@ -61,6 +63,9 @@ typedef struct {
     bool ai_enabled;
     bool analytics_on;
     bool replay_on;
+    /* Analytics and Replay */
+    GameAnalytics analytics;
+    ReplayLog replay_log;
     /* Dice statistics */
     DiceStats dice_stats;
 } GameState;
