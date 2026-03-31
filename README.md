@@ -395,10 +395,9 @@ MIT License — See LICENSE file for details
 
 ## 👨‍💻 Author
 
-**Shubham Patel**  
-📧 [your.email@example.com](mailto:your.email@example.com)  
-🔗 [GitHub](https://github.com/your-username)  
-💼 [LinkedIn](https://linkedin.com/in/your-profile)
+**Shubham Patel** 
+
+C Developer | Systems Programming Enthusiast
 
 ---
 
@@ -411,11 +410,7 @@ MIT License — See LICENSE file for details
 
 ---
 
-## 👨‍💻 Author
 
-**Shubham Patel** 
-
-C Developer | Systems Programming Enthusiast
 
 ---
 
