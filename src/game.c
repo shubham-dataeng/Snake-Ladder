@@ -1,6 +1,6 @@
 /*
 * game.c — Game loop and state machine
-* Depends: game.h, board.h, player.h, dice.h, ui.h, utils.h, save.h
+* Depends: game.h, board.h, player.h, dice.h, ui.h, utils.h, save.h, ai.h
 */
 #include "game.h"
 #include "board.h"
@@ -9,9 +9,11 @@
 #include "ui.h"
 #include "utils.h"
 #include "save.h"
+#include "ai.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 /* ■■ Forward declarations ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
 static void phase_setup(GameState *gs);
 static MoveResult execute_move(GameState *gs, int pidx, int roll);
@@ -119,11 +121,20 @@ while ((c = getchar()) != '\n' && c != EOF) {
     }
 }
 roll = dice_roll(ds);
-} else {
-/* AI: auto-roll */
-printf("\n %s%s\033[0m is thinking...\n",
+} else if (p->type == PLAYER_AI_EASY) {
+/* Easy AI: just roll with a delay */
+printf("\n %s%s\033[0m is thinking...\033[0m\n",
 p->color_code, p->name);
-/* In Phase 8, ai.c determines strategy; for now, just roll */
+usleep(300000);  /* 0.3 second pause */
+roll = ai_make_move(gs, idx);
+} else if (p->type == PLAYER_AI_HARD) {
+/* Hard AI: strategic analysis */
+printf("\n %s%s\033[0m is calculating...\033[0m\n",
+p->color_code, p->name);
+usleep(500000);  /* 0.5 second pause (more "thinking") */
+roll = ai_make_move(gs, idx);
+} else {
+/* Fallback (shouldn't reach here) */
 roll = dice_roll(ds);
 }
 printf(" Rolled: %d\n", roll);

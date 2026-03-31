@@ -63,16 +63,17 @@ This project demonstrates **professional game development practices** in C, incl
 |--------|---------|-------|--------|
 | **board.c/h** | Game grid, snake/ladder placement, O(1) lookups | 250 | ✅ Complete |
 | **player.c/h** | Player state, stats, move tracking | 180 | ✅ Complete |
-| **game.c/h** | State machine, game loop, turn logic | 200 | ✅ Complete |
+| **game.c/h** | State machine, game loop, turn logic | 250 | ✅ Complete |
 | **dice.c/h** | Fair random number generation | 80 | ✅ Complete |
 | **ui.c/h** | ANSI terminal rendering, board display | 200 | ✅ Complete |
 | **save.c/h** | Binary serialization, checksum validation | 180 | ✅ Complete |
-| **ai.c/h** | AI decision making, strategy | 150 | 🔄 In Progress |
+| **config.c/h** | Board configuration parser | 120 | ✅ Complete |
+| **ai.c/h** | AI decision making (Easy/Hard strategies) | 150 | ✅ Complete |
+| **main.c** | Entry point, menu system, game flow | 100 | ✅ Complete |
 | **network.c/h** | Multiplayer over TCP/IP | 200 | 🔄 In Progress |
 | **replay.c/h** | Game recording/playback | 150 | 🔄 In Progress |
 | **analytics.c/h** | Statistics, data aggregation | 120 | 🔄 In Progress |
 | **utils.c/h** | I/O, RNG, terminal control | 150 | ✅ Complete |
-| **main.c** | Entry point, menu system | 80 | 🔄 In Progress |
 
 ### Game State Machine
 
@@ -239,20 +240,21 @@ gcc -Iinclude tests/test_board.c src/board.c src/utils.c -o test_board && ./test
 - [x] Dice mechanics
 - [x] Game loop & state machine
 - [x] Basic UI with colors
-- [x] **Binary save/load with menu integration** (NEW!)
+- [x] Binary save/load with menu integration
 - [x] Menu system with 5 options
 - [x] In-game pause & save
 - [x] Load game from slot
 
-### 🔄 Phase 6-8: Advanced Features (In Progress)
-- [ ] AI players (easy/hard strategies)
-- [ ] Network multiplayer (TCP/IP)
-- [ ] Custom board loader from config file
-- [ ] Game replay system
+### ✅ Phase 6-8: AI & Configuration (Complete)
+- [x] **AI players (easy/hard strategies)** — Easy: random + delay, Hard: probability-based scoring
+- [x] **Custom board configuration** — Parse board_config.txt for snake/ladder positions
+- [x] Professional config parser (case-insensitive, error collection, graceful fallback)
+- [x] Menu integration for both features
 
-### 📋 Phase 9+: Polish & Extension
+### 🔄 Phase 9+: Advanced (In Progress)
+- [ ] Network multiplayer (TCP/IP)
+- [ ] Game replay system
 - [ ] Terminal UI improvements (animations)
-- [ ] Sound effects (optional)
 - [ ] Statistics dashboard
 - [ ] Leaderboard system
 - [ ] Web interface (C to WebAssembly)
