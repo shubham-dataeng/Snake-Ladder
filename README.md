@@ -596,25 +596,6 @@ If this project helped you learn systems programming, game development, or C fun
 
 ---
 
-## 📚 Recommended Reading
-
-### Systems Programming & C
-- **"The C Programming Language"** (K&R) — Essential reference
-- **"Code: The Hidden Language"** (Charles Petzold) — Foundation concepts
-- **"Refactoring"** (Fowler) — Improving existing code structure
-
-### Game Development
-- **"Game Architecture and Design"** (Mike West)
-- **"Game Engine Architecture"** (Jason Gregory)
-- **"AI for Game Developers"** (David M. Bourg)
-
-### Software Engineering
-- **"Clean Code"** (Robert Martin)
-- **"Design Patterns"** (Gang of Four)
-- **"The Pragmatic Programmer"** (Hunt & Thomas)
-
----
-
 <div align="center">
 
 Made with ❤️ by [Shubham Patel](https://github.com/shubham-dataeng)
