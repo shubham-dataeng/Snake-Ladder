@@ -10,6 +10,14 @@
 
 **A masterclass in professional systems programming: architectural patterns, clean C code, and production-grade game engine design.**
 
+<p align="center">
+  <a href="assets/snake-ladder-demo.gif">
+    <img src="assets/snake-ladder-demo.gif" alt="Snake & Ladder — C11 Game Engine, Markov Simulation & Network Multiplayer Demo" width="820px" />
+  </a>
+  <br>
+  <em>Live Demo: C11 systems architecture, stochastic Markov transition matrices, TCP/IP networking & Valgrind memory safety</em>
+</p>
+
 [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Features](#-features) • [Build](#-build) • [Development](#-development)
 
 ---
